@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AGROVISTA MART | Fresh Vegetables</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f7faf7;color:#18351f}
+header{background:#167a3d;color:#fff;padding:18px 5%;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5}
+.logo{font-size:24px;font-weight:800}.tag{font-size:13px;opacity:.9}
+.cart{background:#fff;color:#167a3d;border:0;border-radius:20px;padding:10px 16px;font-weight:700;cursor:pointer}
+.hero{padding:48px 5%;background:linear-gradient(120deg,#e7f7e9,#fff);text-align:center}
+.hero h1{font-size:42px;margin:0 0 10px}.hero p{font-size:18px}
+.products{padding:30px 5%;max-width:1200px;margin:auto}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:18px}
+.card{background:#fff;border-radius:16px;padding:18px;box-shadow:0 3px 15px #0001}.emoji{font-size:65px;text-align:center;background:#eef8ef;border-radius:14px;padding:12px}
+.card h3{margin:12px 0 5px}.price{font-weight:800;font-size:19px}.unit{color:#68776b;font-size:13px}
+button.add{width:100%;margin-top:12px;padding:11px;border:0;border-radius:10px;background:#167a3d;color:white;font-weight:700;cursor:pointer}
+#cartPanel{display:none;position:fixed;right:15px;top:75px;width:min(390px,92vw);background:white;padding:20px;border-radius:16px;box-shadow:0 8px 30px #0003;z-index:10}
+.item{display:flex;justify-content:space-between;border-bottom:1px solid #eee;padding:9px 0}
+input,textarea{width:100%;padding:11px;margin:6px 0;border:1px solid #ccd6ce;border-radius:8px}
+.checkout{background:#0b8f46;color:#fff;border:0;padding:12px;width:100%;border-radius:9px;font-weight:700;cursor:pointer}
+footer{text-align:center;padding:30px;color:#647067}
+</style>
+</head>
+<body>
+<header>
+  <div><div class="logo">🌱 AGROVISTA MART</div><div class="tag">Fresh vegetables • Farmer to Customer</div></div>
+  <button class="cart" onclick="toggleCart()">🛒 Cart (<span id="count">0</span>)</button>
+</header>
+
+<section class="hero">
+<h1>Fresh Vegetables at Your Doorstep</h1>
+<p>शेतकऱ्याकडून थेट ग्राहकापर्यंत • Fresh • Local • Trusted</p>
+</section>
+
+<section class="products">
+<h2>Today's Vegetables</h2>
+<div class="grid" id="products"></div>
+</section>
+
+<div id="cartPanel">
+<h2>Your Cart</h2><div id="cartItems"></div>
+<h3>Total: ₹<span id="total">0</span></h3>
+<input id="name" placeholder="Customer Name">
+<input id="mobile" placeholder="Mobile Number">
+<textarea id="address" placeholder="Delivery Address"></textarea>
+<input id="pincode" placeholder="Pincode">
+<button class="checkout" onclick="orderWhatsApp()">Place Order on WhatsApp</button>
+</div>
+
+<footer>© 2026 AGROVISTA MART • Farmer to Customer</footer>
+
+<script>
+const products=[
+{name:"Tomato",price:40,unit:"1 kg",emoji:"🍅"},
+{name:"Onion",price:30,unit:"1 kg",emoji:"🧅"},
+{name:"Potato",price:35,unit:"1 kg",emoji:"🥔"},
+{name:"Cabbage",price:30,unit:"1 kg",emoji:"🥬"},
+{name:"Carrot",price:50,unit:"1 kg",emoji:"🥕"},
+{name:"Brinjal",price:40,unit:"1 kg",emoji:"🍆"},
+{name:"Lady Finger",price:60,unit:"1 kg",emoji:"🌱"},
+{name:"Green Chilli",price:80,unit:"1 kg",emoji:"🌶️"},
+{name:"Cauliflower",price:45,unit:"1 pc",emoji:"🥦"},
+{name:"Cucumber",price:35,unit:"1 kg",emoji:"🥒"}
+];
+let cart=[];
+function render(){
+ document.getElementById("products").innerHTML=products.map((p,i)=>`
+ <div class="card"><div class="emoji">${p.emoji}</div><h3>${p.name}</h3>
+ <div class="price">₹${p.price} <span class="unit">/ ${p.unit}</span></div>
+ <button class="add" onclick="add(${i})">Add to Cart</button></div>`).join("");
+}
+function add(i){cart.push(products[i]);renderCart()}
+function renderCart(){
+ document.getElementById("count").textContent=cart.length;
+ document.getElementById("cartItems").innerHTML=cart.length?cart.map((p,i)=>`<div class="item"><span>${p.name}</span><b>₹${p.price}</b><button onclick="cart.splice(${i},1);renderCart()">×</button></div>`).join(""):"Cart is empty";
+ document.getElementById("total").textContent=cart.reduce((s,p)=>s+p.price,0);
+}
+function toggleCart(){let x=document.getElementById("cartPanel");x.style.display=x.style.display==="block"?"none":"block"}
+function orderWhatsApp(){
+ if(!cart.length){alert("Please add vegetables to cart.");return}
+ let name=document.getElementById("name").value, mobile=document.getElementById("mobile").value,
+ address=document.getElementById("address").value,pin=document.getElementById("pincode").value;
+ if(!name||!mobile||!address||!pin){alert("Please fill all delivery details.");return}
+ let list=cart.map(p=>`${p.name} - ₹${p.price}`).join("%0A");
+ let total=cart.reduce((s,p)=>s+p.price,0);
+ // Replace 919999999999 with your AGROVISTA MART WhatsApp number.
+ let wa="919999999999";
+ let msg=`AGROVISTA MART ORDER%0AName: ${encodeURIComponent(name)}%0AMobile: ${encodeURIComponent(mobile)}%0AAddress: ${encodeURIComponent(address)}%0APincode: ${encodeURIComponent(pin)}%0A%0AItems:%0A${list}%0A%0ATotal: ₹${total}`;
+ window.open(`https://wa.me/${wa}?text=${msg}`,"_blank");
+}
+render();renderCart();
+</script>
+</body>
+</html>
