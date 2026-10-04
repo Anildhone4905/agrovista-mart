@@ -85,7 +85,7 @@ function orderWhatsApp(){
  let list=cart.map(p=>`${p.name} - ₹${p.price}`).join("%0A");
  let total=cart.reduce((s,p)=>s+p.price,0);
  // Replace 919999999999 with your AGROVISTA MART WhatsApp number.
- let wa="919999999999";
+ let wa="919370460237";
  let msg=`AGROVISTA MART ORDER%0AName: ${encodeURIComponent(name)}%0AMobile: ${encodeURIComponent(mobile)}%0AAddress: ${encodeURIComponent(address)}%0APincode: ${encodeURIComponent(pin)}%0A%0AItems:%0A${list}%0A%0ATotal: ₹${total}`;
  window.open(`https://wa.me/${wa}?text=${msg}`,"_blank");
 }
